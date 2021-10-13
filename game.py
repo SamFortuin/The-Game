@@ -24,6 +24,12 @@ def invalidInput():
   time.sleep(0.2)
   exit()
 
+def listPrint(roomList, roomCount):
+  roomCount = len(roomList)
+  for i in range(roomCount):
+    time.sleep(0.08)
+    print(roomList[i])
+
 #title screen
 print(" \
                                                               _____^_       \n  \
@@ -55,16 +61,14 @@ Where will you look for your dog?\n\
 ·The Kitchen\n·The Bathroom\n·The Bedroom\n")
 
 #input question is in the print_slow above.
-room1= input("")
-room1 = room1.replace("the","")
+room= input("")
+#cleanup for the if statement
+room = room.lower().replace("the","").replace(" ","")
 #clear screen and little bit of text before next question
 clearScreen(0.2)
-print_slow("As you walk towards the ")
-print_slow(room1)
-print_slow(" you wonder what the dog could be doing")
+print_slow("You walk towards the ")
+print_slow(room)
 clearScreen(0.5)
-#cleanup for the if statement
-room1 = room1.lower().replace(" ","")
 
 #lists for the 3 items player needs to pick up
 invList = ["item0","item1","item2"]
@@ -72,24 +76,27 @@ kitchenList = ["·your meds", "·a knife", "·a spoon"]
 bathList = ["·", "·", "·"]
 bedList = ["·", "·", "·"]
 
+#var placeholders for listPrint
+kitchenCount = 0
+bathCount = 0
+bedCount = 0
+
 #meds var for reasons
 medsTaken = False
 
 def roomsItems(itemNum): 
   #if statement for rooms and items
-  if room1 == "kitchen":
+  if room == "kitchen":
     print_slow("You see some items laying in the kitchen:\n")
-    kitchenCount = len(kitchenList)
-    for i in range(kitchenCount):
-      time.sleep(0.08)
-      print(kitchenList[i])
+    listPrint(kitchenList,kitchenCount)
     print_slow("Which one do you pick up?\n")
     item = input("")
+    item = item.replace(" ","").replace("the","").replace("a","").replace("your","")
     if item == "meds":
       print_slow("You pick up your meds\n")
       invList[itemNum] = "meds"
       #removes item from the kitchen
-      kitchenList.remove("your meds")
+      del kitchenList[0]
       print_slow("Do you want to take your meds?\n")
       medsTakenInput = input("")
       medsTakenInput = medsTakenInput.lower()
@@ -102,16 +109,21 @@ def roomsItems(itemNum):
     elif item == "knife":
       print_slow("You pick up the knife")
       invList[itemNum] = "knife"
-    elif "spoon" in item:
+      #removes the item from the kitchen
+      del kitchenList[1]
+    elif item == "spoon":
       print_slow("You pick up the spoon")
-      invList[itemNum] = "knife"
+      invList[itemNum] = "spoon"
+      #removes the item from the kitchen
+      del kitchenList[2]
     else:
       invalidInput()
 
-  elif room1 == "bathroom":
-    print_slow("As you enter the living room you see your dog's favorite pillow, ")
+  elif room == "bathroom":
+    print_slow("As you enter the living room you see:")
+    listPrint(bathList,bathCount)
 
-  elif room1 == "bedroom":
+  elif room == "bedroom":
     exit()
 
   else:
