@@ -1,5 +1,6 @@
 import time, os, sys
 
+print('"what?"')
 list = [1, 2, 2.3, 78, "james"]
 listCount = 0
 invList = [1,2,3,4,5]
