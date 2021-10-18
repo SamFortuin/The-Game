@@ -13,24 +13,31 @@ def print_slow(str):
         sys.stdout.write(letter)
         sys.stdout.flush()
         time.sleep(0.03)
-
+   
 #clears screen after given time
 def clearScreen(sleepTime):
-    time.sleep(sleepTime)
-    os.system("cls")
+  time.sleep(sleepTime)
+  os.system("cls")
 
 def invalidInput():
   print("\ninvalid input, exeting program")
   time.sleep(0.2)
+  exit()
 
 def listPrint(roomList, roomCount):
   roomCount = len(roomList)
   for i in range(roomCount):
-    time.sleep(0.08)
+    time.sleep(0.12)
     print(roomList[i])
 
+def invPrint():
+  invCount = len(invList)
+  for i in range(invCount):
+    time.sleep(0.12)
+    print("·"+invList[i])
+
 def itemPickup(item,listNum):
-  print_slow("You pick up the ")
+  print_slow("\nYou pick up the ")
   print_slow(item)
   print(".\n")
   invList[listNum] = item
@@ -60,13 +67,13 @@ print(" \
 clearScreen(0.5)
 
 #ask which room player wants to go to
-print_slow("You return home after a long day of work.\n\
+print_slow("You return home after a long night of partying.\n\
 As you enter the living room you can't find your dog in it's usual spot.\n\
 Where will you look for your dog?\n\
 ·The Kitchen\n·The Bathroom\n·The Bedroom\n")
 
 #input question is in the print_slow above. cleanup is done in the same line
-room= input("").lower().replace("the","").replace(" ","")
+room = input("").lower().replace("the","").replace(" ","")
 #clear screen and little bit of text before next question
 clearScreen(0.2)
 print_slow("You walk towards the ")
@@ -77,15 +84,13 @@ clearScreen(0.5)
 invList = ["item0","item1","item2"]
 kitchenList = ["·dog food", "·a knife", "·a spoon"]
 bathList = ["·soap", "·a towel", "·some toiletpaper"]
-bedList = ["·", "·", "·"]
+bedList = ["·your pillow", "·your bed sheets", "·your sleeping girlfriend"]
 
 #var placeholders for listPrint
 kitchenCount = 0
 bathCount = 0
 bedCount = 0
 
-#meds var for reasons
-dogFoodEaten = False
 
 def roomsItems(itemNum): 
   #if statement for rooms and items
@@ -101,12 +106,24 @@ def roomsItems(itemNum):
       print_slow("Do you want to eat the dog food?\n")
       dogFoodInput = input("").lower()
       if dogFoodInput == "y" or dogFoodInput == "yes":
+        print_slow("In your drunker stupor you eat all the dog food from the can.\nIt's oddly tasty")
         #sets item slot 0 back to clean because player consumed the dog food
-        invList[itemNum] = "item0"
-        global dogFoodEaten 
-        dogFoodEaten= True
+        time.sleep(0.5)
+        print_slow("\nDo you keep the can or throw it away?\n")
+        canKeep = input("").lower()
+        if canKeep == "keep":
+          print_slow("You decide to keep the can")
+          invList[itemNum] = "empty can"
+        elif "throw" in canKeep:
+          print_slow("You decide to throw away the can.")
+          invList[itemNum] = "item"+str(itemNum)
+        else:
+          print_slow("You can't decide what to do so you just throw the can away")
+          invList[itemNum] = "item"+str(itemNum)
+      elif dogFoodInput == "n" or dogFoodInput == "no":
+        print_slow("You decide to not eat the dog food.")
       else:
-        pass
+        print_slow("You don't quite know what to do with the can so you just take it with you.")
     elif itemKitchen == "knife":
       itemPickup("knife",itemNum)
       #removes the item from the kitchen
@@ -134,89 +151,116 @@ def roomsItems(itemNum):
       itemPickup("towel",itemNum)
       #removes the towel from the bathroom list
       bathList.remove('·a towel')
-
-
-      
-
-
-
+    elif itemBath == "toiletpaper":
+      itemPickup("toilet paper",itemNum)
+      #removes the toilet paper from the bathroom list
+      bathList.remove('·some toiletpaper')
+    else:
+      invalidInput()
+  
   elif room == "bedroom":
-    exit()
-
+    print_slow("As you enter the bedroom you see:\n")
+    listPrint(bedList,bedCount)
+    print_slow("What do you pick up?\n")
+    #input seperate because of print_slow
+    itemBed = input("").lower().replace(" ","").replace("your","")
+    if itemBed == "pillow":
+      itemPickup("pillow",itemNum)
+      #removes item from the bedroom
+      bedList.remove("·your pillow")
+    elif itemBed == "bedsheets":
+      itemPickup("bed sheets",itemNum)
+      print_slow('While taking the bedsheets you wake up your girlfriend.\nUnderstandably she is not happy with this.\n"Why are you like this?" she asks.')
+      gfReplace = bedList.index("·your sleeping girlfriend")
+      bedList[gfReplace] = "·your girlfriend"
+      bedList.remove("·your bed sheets")
+    elif "girlfriend" in itemBed:
+      clearScreen(1)
+      if "·your sleeping girlfriend" in bedList:
+        print_slow('You try pick up your girlfriend.\nShe wakes up as you clumsily continue your pick up attempt.\n"Not this shit again" she says angrily.\nYou put your girlfriend back down in fear she might break up with you.')
+        gfReplace = bedList.index("·your sleeping girlfriend")
+        bedList[gfReplace] = "·your girlfriend"
+      elif "·your girlfriend" in bedList:
+        print_slow('You try to pick up your girlfriend for the second time.\nThis time she is already awake so she sees you coming\n"I')
+        #seperation because of I've
+        print_slow("'ve had it with you!")
+        print_slow('"\nShe gets out of bed and walks out the bedroom.\nShe puts on her jacket and grabs her keys.\nShe slams the door behind her and is never seen again.')
+        bedList.remove("·your girlfriend")
+      else:
+        pass
   else:
-    exit()
-
-#for i in range(2):
-#  roomsItems(i)
-#  print_slow("")
+    invalidInput()
 
 for i in range(3):
   roomsItems(i)
-  clearScreen(1)
+  clearScreen(2.5)
   if i == 0:
-    print_slow("As you walk back towards the living room you get the feeling you're still missing something")
+    print_slow("As you walk back towards the living room you get the feeling you're still missing something.")
     clearScreen(1.5)
     print_slow("Where do you want to look for the next item?\n·The Kitchen\n·The Bathroom\n·The Bedroom\n")
-    room = input("") 
+    room = input("").lower().replace("the","").replace(" ","") 
   elif i == 1:
-    print_slow("When you walk back to the living room once again you feel like you need one more thing")
+    print_slow("When you walk back to the living room once again you feel like you need one more thing.")
     clearScreen(1.5)
     print_slow("Where do you want to look for the final item?\n·The Kitchen\n·The Bathroom\n·The Bedroom\n")
-    room = input("") 
-  elif i == 2:
-    print_slow("Now that you have collected three items you feel as though you can start calling your dog down in the living room")
+    room = input("").lower().replace("the","").replace(" ","")
+
+#empty handed var so ending text from incorrect order doesn't play
+emptyHanded = False
+#print statements in case an item slot is empty
+if "item0" in invList:invList.remove("item0")
+if "item1" in invList:invList.remove("item1")
+if "item2" in invList:invList.remove("item2")
+if len(invList) > 0:
+  print_slow("Now that you have collected some items you feel as though you can start calling your dog down in the living room.")
+  clearScreen(1.5)
+elif len(invList) == 0:
+  print_slow('Empty handed you sit down on the couch and think to yourself: "Eh the dog will be fine. But what are they doing?"')
+  emptyHanded = True
+
+#dogBedCorrectOrder vars
+dogBedCorrectOrder1 = False
+dogBedCorrectOrder2 = False
+dogBedCorrectOrder3 = False
+
+#doBedOrder list
+#empty lists are seen as false
+#if any items in invList dog bed building sequence starts
+if invList:
+  for i in range(len(invList)):
+    if i == 0:
+      print_slow("Now that you have collected your items.\nYou start prepairing a dog bed in the hopes that your dog will return.\nWhich item do you put down first?\n")
+    elif i >= 1:
+      print_slow("Which item do you put down next?\n")
+    #inv print prints all items in inv with ·. ergo not using listPrint
+    invPrint()
+    dogBedOrder = input('').lower()
+    #item 1 should be towel
+    if (dogBedOrder == "towel" or dogBedOrder == "bed sheets") and i == 0:
+      dogBedCorrectOrder1 = True
+      invList.remove(dogBedOrder)
+    #item 2 should be pillow
+    elif dogBedOrder == "pillow" and i == 1:
+      dogBedCorrectOrder2 = True
+      invList.remove(dogBedOrder)
+    elif dogBedOrder == "dog food" and i == 2:
+      dogBedCorrectOrder3 = True
+      invList.remove(dogBedOrder)
+    else:
+      invList.remove(dogBedOrder)
     clearScreen(1.5)
-
-print_slow("Now that you have collected 3 items you start prepairing a dog bed in the hopes that your dog will return.\n\
-Which item do you put down first?\n")
-listPrint(invList,0)
-dogBedOrder1 = input('').lower()
-#item 1 should be towel
-if dogBedOrder1 == "towel":
-  global correctOrder1
-  correctOrder1 = True
-  invList.remove(dogBedOrder1)
 else:
-  correctOrder1 = False
-  invList.remove(dogBedOrder1)
-clearScreen(1.5)
+  pass
 
-print_slow("Which item do you put down next?\n")
-listPrint(invList,0)
-dogBedOrder2 = input('').lower()
-#item 2 should be pillow
-if dogBedOrder2 == "pillow":
-  global correctOrder2
-  correctOrder2 = True
-  invList.remove(dogBedOrder2)
-else:
-  correctOrder2 = False
-  invList.remove(dogBedOrder2)
-clearScreen(1.5)
+if dogBedCorrectOrder1 == True and dogBedCorrectOrder2 == True and dogBedCorrectOrder3 == True:
+  print_slow('You hear your dog come home through their doggy door.\nAs they lay down on the doggy bed you made you ask your dog a question.\n"so what were you doing?"')
+elif emptyHanded == False:
+  print_slow("You sit down on the couch waiting for your dog to come in but they don't come. ")
+  print_slow('"Eh they');print_slow("'ll be fine");print_slow('" you say to yourself als you fall asleep on the couch.')
 
-print_slow("Which item do you put down next?\n")
-listPrint(invList,0)
-dogBedOrder3 = input('').lower()
-#item 2 should be pillow
-if dogBedOrder3 == "dog food":
-  global correctOrder3
-  correctOrder3 = True
-  invList.remove(dogBedOrder3)
-else:
-  correctOrder3 = False
-  invList.remove(dogBedOrder3)
-clearScreen(1.5)
-
-if correctOrder1 == True and correctOrder2 == True and correctOrder3 == True:
-  print_slow('You hear your dog come home through their doggy door.\n\
-  As they lay down on the doggy bed you made you ask your dog a question.\n\
-  "so what were you doing?"')
-else:
-  print_slow('')
-
-
-#todo
-#finish bathroom
-#finsih bedroom
-#to be continued ascii
-#final text
+time.sleep(2)
+print("\n\n  ______         __            ______            __  __                     __\n\
+ /_  __/___     / /_  ___     / ____/___  ____  / /_/_/___  __  _____  ____/ /\n\
+  / / / __ \   / __ \/ _ \   / /   / __ \/ __ \/ __/ / __ \/ / / / _ \/ __  / \n\
+ / / / /_/ /  / /_/ /  __/  / /___/ /_/ / / / / /_/ / / / / /_/ /  __/ /_/ /  \n\
+/_/  \____/  /_.___/\___/   \____/\____/_/ /_/\__/_/_/ /_/\__,_/\___/\__,_/   \n")
